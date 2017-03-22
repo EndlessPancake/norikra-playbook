@@ -7,15 +7,25 @@
 ## Install
  - git clone
  - edit playbooks as you like 
-   - develop/staging/production invenrty file
+   - update development/staging/production inventory file for YOUR enveriorments
    - update host_vars/{{ "STAGING" }}.yml
    - update roles if you need
    - ... and so on
 
 ## Usage (PlayBook)
- - "asible ping" maybe your help.
+ - Setup SSH connectivity from YOUR Ansible node to "Targets" in inventory.
+ - "ansible ping" maybe your help.
+ ```
+ $ ansible <SOMEWHERE YOUR NODE> -m ping
+ ```
  - "ansible --syntax-check" also helpfull.
- - do it your playbook
+ ```
+ $ ansible-playbook -i staging norikra.yml --syntax-check
+ ```
+ - do it
+  ```
+ $ ansible-playbook -i staging norikra.yml
+ ```
  
 # Copyright
 * Copyright:: Copyright (c) 2017- endless pancake
