@@ -1,0 +1,13 @@
+---
+- hosts: norikra
+  remote_user: root
+  vars_files:
+    - host_vars/{{ stage }}.yml
+  roles:
+    - common
+    - kernel
+    - td-agent
+    - norikra
+  ## proxy
+  environment:
+    http_proxy: http://proxy.mynet.net:8080

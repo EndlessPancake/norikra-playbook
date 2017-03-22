@@ -1,0 +1,10 @@
+---
+- name: add .bashrc , export path
+  shell: echo export PATH=export PATH=$JAVA_HOME/bin:$JRUBY_HOME/bin:$PATH >> /home/admin/.bashrc
+
+- name: install norikra
+  command: gem install norikra
+  environment:
+    http_proxy: "{{ td_agent.proxy_host }}"
+    https_proxy: "{{ td_agent.proxy_host }}"
+    PATH: "/var/mywork/java/bin:/var/mywork/jruby/bin:{{ ansible_env.PATH }}"

@@ -1,0 +1,80 @@
+---
+- name: enable yum on HOP
+  lineinfile: >-
+    dest='/etc/yum.conf'
+    state=present
+    backrefs=yes
+    regexp='^#?\proxy\=http\:\/\/proxy\.myhost\.net\:8080\/'
+    line='proxy=http://proxy.myhost.net:8080/'
+
+- name: setup base directory
+  file: >
+    path={{ norikra.base_dir }}
+    state=directory 
+    owner=root 
+    group=root 
+    mode=0755
+
+- name: and sub directory
+  file: >
+    path={{ norikra.base_dir }}/{{ item.name }} 
+    state=directory 
+    owner=root 
+    group=root 
+    mode=0755
+  with_items: "{{ norikra.sub_dirs }}"
+
+- name: download jdk and jruby from hop-git
+  get_url:
+    url: "https://somewhere.myhost.net/~/el6/x86_64/{{ item.name }}"
+    dest: /var/tmp/{{ item.name }}
+    validate_certs: no
+  with_items: "{{ norikra.git_src_files }}"
+
+- name: java extract
+  command: tar zxvf /var/tmp/{{ norikra.jdk }} chdir={{ norikra.base_dir }}
+
+- name: change group/owner java
+  file: >
+    path={{ norikra.base_dir }}/{{ norikra.jdk_ver }}
+    owner=root
+    group=root
+    mode=0755
+
+- name: set java symlink
+  file: >
+    src={{ norikra.base_dir }}/{{ norikra.jdk_ver }}
+    dest={{ norikra.base_dir }}/java
+    state=link
+
+- name: jruby extract
+  unarchive: >
+    copy=no
+    src=/var/tmp/{{ norikra.jruby }}
+    dest={{ norikra.base_dir }}/
+
+- name: change group/owner jruby
+  file: >
+    path={{ norikra.base_dir }}/{{ norikra.jruby_ver }}
+    owner=root
+    group=root
+    mode=0755
+
+- name: set jruby symlink
+  file: >
+    src={{ norikra.base_dir }}/{{ norikra.jruby_ver }}
+    dest={{ norikra.base_dir }}/jruby
+    state=link
+
+## for generic CentOS
+- name: ulimit for fluentd
+  lineinfile: >-
+    dest='/etc/security/limits.conf'
+    state=present
+    backup=yes
+    line={{ item.name }}
+  with_items: {{ td_agent.limits }}
+
+- name: ulimit and kernel parmas reload
+  command: ulimit -n
+  command: sysctl -w

@@ -1,0 +1,8 @@
+---
+kernel:
+  - { param: 'kernel.msgmnb', value: '65536' }
+  - { param: 'kernel.msgmax', value: '65536' }
+  - { param: 'kernel.shmmax', value: '68719476736' }
+  - { param: 'kernel.shmall', value: '4294967296' }
+  - { param: 'net.ipv4.tcp_tw_reuse', value: '1' }
+  - { param: 'net.ipv4.tcp_syncookies', value: '1' }

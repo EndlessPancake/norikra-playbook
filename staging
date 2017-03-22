@@ -1,0 +1,13 @@
+[azure_eus1-norikra]
+xxx.yyy.zzz.www
+
+[azure_eus2-norikra]
+xxx.yyy.zzz.www
+
+## norikra in all locations
+[norikra:children]
+azure_eus1-norikra
+azure_eus2-norikra
+
+[all:vars]
+stage=staging

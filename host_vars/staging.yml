@@ -1,0 +1,58 @@
+#
+# host_vars/staging.yml
+#
+## norikra
+norikra:
+  jdk: jdk-8u121-linux-x64.tar.gz
+  jdk_ver: jdk1.8.0_121
+  jruby: jruby-bin-1.7.26.zip
+  jruby_ver: jruby-1.7.26
+  base_dir: /var/mywork
+  sub_dirs: 
+    - { name: 'norikra' }
+    - { name: 'norikra/conf.d' }
+    - { name: 'etc' }
+    - { name: 'sbin' }
+  git_src_files:
+    - { name: 'jdk-8u121-linux-x64.tar.gz' }
+    - { name: 'jruby-bin-1.7.26.zip' }
+
+## fleuntd
+td_agent:
+  proxy_host: "http://proxy.myhost.net:8080"
+  plugins:
+    - { name: 'fluent-plugin-elasticsearch' }
+    - { name: 'fluent-plugin-azurestorage' }
+    - { name: 'fluent-plugin-azureeventhubs' }
+    - { name: 'fluent-plugin-redshift' }
+    - { name: 'fluent-plugin-s3' }
+    - { name: 'fluent-plugin-to_s' }
+    - { name: 'fluent-plugin-mail' }
+    - { name: 'fluent-plugin-slack' }
+    - { name: 'fluent-plugin-norikra' }
+  in_tail_path: /var/www/logs/access.log
+  logformat_combind: '/^(?<host>[^ ]*) [^ ]* (?<user>[^ ]*) \[(?<time>[^\]]*)\] \"(?<method>\S+)(?: +(?<path>[^ ]*) +\S*)?\" (?<code>[^ ]*) (?<size>[^ ]*) (?<response>[^ ]*)(?: \"(?<referer>[^\"]*)\" \"(?<agent>[^\"]*)\")?$/'
+  tag_source: apache.access_log
+  position_path: /var/log/td-agent/position
+  aggregator:
+    ipaddr: 172.16.1.1
+    port: 16000
+  limits:
+    - { name: 'root soft nofile 65536' }
+    - { name: 'root hard nofile 65536' }
+    - { name: '* soft nofile 65536' }
+    - { name: '* hard nofile 65536' }
+  norikra_server: localhost
+  norikra_server_port: 26571
+  norikra_method: sweep
+  norikra_in_tag_prefix: norikra.event
+  norikra_out_tag_prefix: norikra.quiery
+  norikra_flush_interval: 2s
+  norikra_fetch_interval: 5s
+  norikra_result_log: '/var/log/td-agent/td-%Y-%m-%d/norikra_%H.log'
+  norikra_smtpServer: localhost
+  norikra_mailTo: xxxxxxx@docomo.ne.jp
+  norikra_mailSubject: ALERT from Norikra
+  norikra_configs:
+    - { name: 'in_norikra.conf' }
+    - { name: 'out_norikra.conf' }
